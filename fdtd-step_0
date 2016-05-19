@@ -1,0 +1,11 @@
+import numpy as np
+import math as m
+import matplotlib as mtp
+
+#source function
+def source(current_time, delay, source_width)
+  return np.exp(-(current_time-delay)**2/(2*(source_width**2)))
+#define the constants
+imp0=377.0
+c=1.0
+size=3000.0
