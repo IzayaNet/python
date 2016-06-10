@@ -1,12 +1,44 @@
+import math
+import matplotlib.pyplot as mpl
 import numpy as np
-import math as m
-import matplotlib as mtp
 
-#source function
-def source(current_time, delay, source_width)
-  return np.exp(-(current_time-delay)**2/(2*(source_width**2)))
-#define the constants
-imp0=377.0
-c=1.0
-size=3000.0
-hy[size]=np.ones
+#definition of constant
+z0=377;
+DomainSize=1000.0
+SourceWidth=10.0
+Delay=10*SourceWidth
+TimeInterval=int((DomainSize+Delay)/15)
+AllTime=int((DomainSize+Delay))
+SourceX=int(DomainSize/2.0) # place the source at a middle of the domain
+ez=[0.0 for x in range(int(DomainSize))]
+hy=[0.0 for a in range(int(DomainSize))]
+Legenda=np.linspace(0,DomainSize-1,DomainSize)
+##########Checking#######
+#for i in range(int(DomainSize)):
+#    print( ez[i])
+########################
+
+#definition of the functions
+def Source(CurrentTime, Delay, SourceWidth):
+    return math.exp(-(CurrentTime-Delay)**2/(2*SourceWidth**2))
+
+
+#fields
+for CurrentTime in range(int(AllTime)):
+    for m in range(int(DomainSize-1)):
+        hy[m] = hy[m] + (ez[m+1]-ez[m])/z0
+    for m in range(int(DomainSize-1)):
+        ez[m] = ez[m] + (hy[m]-hy[m-1])*z0
+    ez[SourceX]+=Source(CurrentTime, Delay, SourceWidth)
+    if CurrentTime % TimeInterval == 0 or CurrentTime+10>AllTime:
+        fig, axs =mpl.subplots(2,1)
+        fig.tight_layout()
+        mpl.title("After t=%i" %CurrentTime)
+        axs[0].plot(Legenda, ez, label="Ez")
+        axs[1].plot(Legenda, hy, label="Hy")
+        axs[0].legend(loc='upper left')
+        axs[1].legend(loc='upper left')
+        mpl.draw()
+        mpl.show()
+        mpl.clf()
+        mpl.close()
