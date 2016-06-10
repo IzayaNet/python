@@ -1,0 +1,69 @@
+import math
+import matplotlib.pyplot as mpl
+import numpy as np
+###Field's constants#####
+z0=377
+DomainSize=1000.0
+Eps=1
+C=1/np.sqrt(Eps)
+Eps=[Eps for r in range(int(DomainSize))]
+
+#definition of constant
+
+SourceWidth=10.0*np.sqrt(Eps)
+Delay=10*SourceWidth
+TimeInterval=(DomainSize+Delay)/11
+AllTime=int(DomainSize+Delay)
+SourceX=DomainSize/2 # place the source at a middle of the domain
+ez=[0.0 for x in range(DomainSize)]
+hy=[0.0 for a in range(DomainSize)]
+Legenda=np.linspace(0,DomainSize-1,DomainSize)
+
+###Boundary_Conditions###
+
+##########Checking#######
+#for i in range(int(DomainSize)):
+#    print( ez[i])
+########################
+
+#definition of the functions
+def Source(CurrentTime, Delay, SourceWidth):
+    return math.exp(-(CurrentTime-Delay)**2/(2.0*SourceWidth**2))
+
+
+#fields
+for CurrentTime in range(AllTime):
+    hy[0]=hy[1]
+    ez[0]=ez[1]
+#    ez[DomainSize-1]=ez[DomainSize-2]
+#    hy[DomainSize-1]=hy[DomainSize-2]
+    
+    for m in range(1,int(DomainSize-1),1):
+        hy[m] = hy[m] + (ez[m+1]-ez[m])/z0
+#    ez[0]=ez[1]
+    ez[DomainSize-1]=ez[DomainSize-2]
+    hy[DomainSize-1]=hy[DomainSize-2]
+#    hy[0]=hy[1]
+    for m in range(1,int(DomainSize-1),1):
+        ez[m] = ez[m] + (hy[m]-hy[m-1])*z0
+ 
+  #  ez[int(DomainSize)-1]=ez[int(DomainSize)-2]
+    ez[SourceX]+=Source(CurrentTime, Delay, SourceWidth)
+    if CurrentTime % TimeInterval == 0 or CurrentTime+10>AllTime or CurrentTime==593 or CurrentTime==594:
+        print(CurrentTime)
+        print(ez[0])
+        print(ez[1])
+        print(hy[0])
+        print(hy[1])
+        fig, axs =mpl.subplots(2,1)
+        fig.tight_layout()
+        mpl.title("After t=%i" %CurrentTime)
+        axs[0].plot(Legenda, ez, label="Ez")
+        axs[1].plot(Legenda, hy, label="Hy")
+        axs[0].legend(loc='upper left')
+        axs[1].legend(loc='upper left')
+        mpl.draw()
+        mpl.show()
+        mpl.clf()
+        mpl.close()
+
